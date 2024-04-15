@@ -1,10 +1,11 @@
-
+using diplom.Data;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddDbContext<DiplomDbContext>();
 
 var app = builder.Build();
 
