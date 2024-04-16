@@ -1,0 +1,22 @@
+﻿@model IEnumerable<Subject>
+
+<h1>Предметы</h1>
+<table class="table table-bordered table-striped" style="width: 100%">
+	<thead>
+		<tr>
+			<th>
+				Название предмета
+			</th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var obj in Model)
+		{
+				<tr>
+					<td width="50%">
+					@obj.SubjectName
+					</td>
+				</tr>
+		}
+	</tbody>
+</table>
