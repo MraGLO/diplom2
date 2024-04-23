@@ -8,19 +8,20 @@ using Microsoft.EntityFrameworkCore;
 using diplom.Data;
 using diplom.Models;
 using diplom.data.Enum;
+using diplom.Interfaces;
 
 namespace diplom.Controllers
 {
 	public class TeachersController : Controller
 	{
-		private readonly DiplomDbContext _dbContext;
-		public TeachersController(DiplomDbContext dbContext)
+		private readonly ITeacherRepository _teacherRepository;
+		public TeachersController(ITeacherRepository teacherRepository)
 		{
-			_dbContext = dbContext;
+			_teacherRepository = teacherRepository;
 		}
-		public IActionResult Index()
+		public async Task<IActionResult> Index()
 		{
-			List<Teacher> teachers = _dbContext.Teachers.ToList();
+			IEnumerable<Teacher> teachers = await _teacherRepository.GetAll();
 			return View(teachers);
 		}
 		public IActionResult Create()
@@ -28,29 +29,30 @@ namespace diplom.Controllers
 			ViewBag.Category = Enum.GetValues(typeof(TeacherCategory));
 			return View();
 		}
+
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public IActionResult Create(Teacher obj, string SelectedCategory)
+		public IActionResult Create(Teacher obj)
 		{
-			if (ModelState.IsValid)
+            //obj.Category = Array.IndexOf(Enum.GetValues(typeof(TeacherCategory)), SelectedCategory);
+            if (!ModelState.IsValid)
 			{
-				obj.Category = Array.IndexOf(Enum.GetValues(typeof(TeacherCategory)), SelectedCategory);
-				_dbContext.Teachers.Add(obj);
-				_dbContext.SaveChanges();
-				TempData["success"] = "Преподаватель успешно добавлен";
-				return RedirectToAction("Index");
-			}
-			return View(obj);
+                return View(obj);
+            }
+            _teacherRepository.Add(obj);
+            TempData["success"] = "Преподаватель успешно добавлен";
+            return RedirectToAction("Index");
+            
 		}
 
-		public IActionResult Edit(int? id)
+		public async Task<IActionResult> Edit(int? id)
 		{
 			if (id == null || id == 0)
 			{
 				return NotFound();
 			}
 
-			var teacherFromDb = _dbContext.Teachers.Find(id);
+			var teacherFromDb = await _teacherRepository.GetByIdAsync(id);
 			if (teacherFromDb == null)
 			{
 				return NotFound();
@@ -64,22 +66,21 @@ namespace diplom.Controllers
 		{
 			if (ModelState.IsValid)
 			{
-				_dbContext.Teachers.Update(obj);
-				_dbContext.SaveChanges();
+				_teacherRepository.Update(obj);
 				TempData["success"] = "Преподаватель успешно обновлен";
 				return RedirectToAction("Index");
 			}
 			return View(obj);
 		}
 
-		public IActionResult Delete(int? id)
+		public async Task<IActionResult> Delete(int? id)
 		{
 			if (id == null || id == 0)
 			{
 				return NotFound();
 			}
 
-			var obj = _dbContext.Teachers.Find(id);
+			var obj = await _teacherRepository.GetByIdAsync(id);
 			if (obj == null)
 			{
 				return NotFound();
@@ -90,15 +91,14 @@ namespace diplom.Controllers
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public IActionResult DeletePost(int? id)
+		public async Task<IActionResult> DeletePost(int? id)
 		{
-			var obj = _dbContext.Teachers.Find(id);
+			var obj = await _teacherRepository.GetByIdAsync(id);
 			if (obj == null)
 			{
 				return NotFound();
 			}
-			_dbContext.Teachers.Remove(obj);
-			_dbContext.SaveChanges();
+			_teacherRepository.Delete(obj);
 			TempData["success"] = "Преподаватель успешно удален";
 			return RedirectToAction("Index");
 		}

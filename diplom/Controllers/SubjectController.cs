@@ -1,4 +1,5 @@
 ﻿using diplom.Data;
+using diplom.Interfaces;
 using diplom.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -7,14 +8,14 @@ namespace diplom.Controllers
 {
     public class SubjectController : Controller
     {
-        private readonly DiplomDbContext _dbContext;
-        public SubjectController(DiplomDbContext dbContext)
+        private readonly ISubjectRepository _subjectRepository;
+        public SubjectController(ISubjectRepository subjectRepository)
         {
-            _dbContext = dbContext;
+            _subjectRepository = subjectRepository;
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            List<Subject> subject = _dbContext.Subjects.ToList();
+            IEnumerable<Subject> subject = await _subjectRepository.GetAll();
             return View(subject);
         }
 		public IActionResult Create()
@@ -27,22 +28,21 @@ namespace diplom.Controllers
 		{
             if (ModelState.IsValid) 
             {
-				_dbContext.Subjects.Add(obj);
-				_dbContext.SaveChanges();
+				_subjectRepository.Add(obj);
 				TempData["success"] = "Предмет успешно добавлен";
 				return RedirectToAction("Index");
 			}
             return View(obj);
 		}
 
-		public IActionResult Edit(int? id)
+		public async Task<IActionResult> Edit(int? id)
 		{
 			if (id==null || id==0) 
 			{
 				return NotFound();
 			}
 
-			var subjectFromDb = _dbContext.Subjects.Find(id);
+			var subjectFromDb = await _subjectRepository.GetByIdAsync(id);
 			if (subjectFromDb == null)
 			{
 				return NotFound();
@@ -52,26 +52,25 @@ namespace diplom.Controllers
 		}
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public IActionResult Edit(Subject obj)
+		public  IActionResult Edit(Subject obj)
 		{
 			if (ModelState.IsValid)
 			{
-				_dbContext.Subjects.Update(obj);
-				_dbContext.SaveChanges();
+				_subjectRepository.Update(obj);
 				TempData["success"] = "Предмет успешно обновлен";
 				return RedirectToAction("Index");
 			}
 			return View(obj);
 		}
 
-		public IActionResult Delete(int? id)
+		public async Task<IActionResult> Delete(int? id)
 		{
 			if (id == null || id == 0)
 			{
 				return NotFound();
 			}
 
-			var obj = _dbContext.Subjects.Find(id);
+			var obj = await _subjectRepository.GetByIdAsync(id);
 			if (obj == null)
 			{
 				return NotFound();
@@ -82,15 +81,14 @@ namespace diplom.Controllers
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public IActionResult DeletePost(int? id)
+		public async Task<IActionResult> DeletePost(int? id)
 		{
-			var obj = _dbContext.Subjects.Find(id);
+			var obj = await _subjectRepository.GetByIdAsync(id);
 			if (obj == null)
 			{
 				return NotFound();
 			}
-			_dbContext.Subjects.Remove(obj);
-			_dbContext.SaveChanges();
+			_subjectRepository.Delete(obj);
 			TempData["success"] = "Предмет успешно удален";
 			return RedirectToAction("Index");
 		}

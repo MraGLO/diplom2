@@ -1,10 +1,14 @@
 using diplom.Data;
+using diplom.Interfaces;
+using diplom.Repository;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<ISubjectRepository, SubjectRepository>();
+builder.Services.AddScoped<ITeacherRepository, TeacherRepository>();
 builder.Services.AddDbContext<DiplomDbContext>(options => 
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
