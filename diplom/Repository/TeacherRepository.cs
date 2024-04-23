@@ -14,7 +14,7 @@ namespace diplom.Repository
 		}
 		public bool Add(Teacher teacher)
 		{
-			_context.Add(teacher);
+            _context.Add(teacher);
 			return Save();
 		}
 

@@ -12,16 +12,16 @@ using diplom.Interfaces;
 
 namespace diplom.Controllers
 {
-	public class TeachersController : Controller
+	public class TeacherController : Controller
 	{
 		private readonly ITeacherRepository _teacherRepository;
-		public TeachersController(ITeacherRepository teacherRepository)
+		public TeacherController(ITeacherRepository teacherRepository)
 		{
 			_teacherRepository = teacherRepository;
 		}
 		public async Task<IActionResult> Index()
 		{
-			IEnumerable<Teacher> teachers = await _teacherRepository.GetAll();
+            IEnumerable<Models.Teacher> teachers = await _teacherRepository.GetAll();
 			return View(teachers);
 		}
 		public IActionResult Create()
@@ -32,7 +32,7 @@ namespace diplom.Controllers
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public IActionResult Create(Teacher obj)
+		public IActionResult Create(Models.Teacher obj)
 		{
             //obj.Category = Array.IndexOf(Enum.GetValues(typeof(TeacherCategory)), SelectedCategory);
             if (!ModelState.IsValid)
@@ -62,7 +62,7 @@ namespace diplom.Controllers
 		}
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public IActionResult Edit(Teacher obj)
+		public IActionResult Edit(Models.Teacher obj)
 		{
 			if (ModelState.IsValid)
 			{
