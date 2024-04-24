@@ -14,19 +14,18 @@ namespace diplom.Controllers
 {
 	public class TeacherController : Controller
 	{
-		private readonly ITeacherRepository _teacherRepository;
+		private readonly ITeacherRepository _repository;
 		public TeacherController(ITeacherRepository teacherRepository)
 		{
-			_teacherRepository = teacherRepository;
+			_repository = teacherRepository;
 		}
 		public async Task<IActionResult> Index()
 		{
-            IEnumerable<Models.Teacher> teachers = await _teacherRepository.GetAll();
+            IEnumerable<Models.Teacher> teachers = await _repository.GetAll();
 			return View(teachers);
 		}
 		public IActionResult Create()
 		{ 
-			ViewBag.Category = Enum.GetValues(typeof(TeacherCategory));
 			return View();
 		}
 
@@ -34,12 +33,11 @@ namespace diplom.Controllers
 		[ValidateAntiForgeryToken]
 		public IActionResult Create(Models.Teacher obj)
 		{
-            //obj.Category = Array.IndexOf(Enum.GetValues(typeof(TeacherCategory)), SelectedCategory);
             if (!ModelState.IsValid)
 			{
                 return View(obj);
             }
-            _teacherRepository.Add(obj);
+            _repository.Add(obj);
             TempData["success"] = "Преподаватель успешно добавлен";
             return RedirectToAction("Index");
             
@@ -52,7 +50,7 @@ namespace diplom.Controllers
 				return NotFound();
 			}
 
-			var teacherFromDb = await _teacherRepository.GetByIdAsync(id);
+			var teacherFromDb = await _repository.GetByIdAsync(id);
 			if (teacherFromDb == null)
 			{
 				return NotFound();
@@ -66,7 +64,7 @@ namespace diplom.Controllers
 		{
 			if (ModelState.IsValid)
 			{
-				_teacherRepository.Update(obj);
+				_repository.Update(obj);
 				TempData["success"] = "Преподаватель успешно обновлен";
 				return RedirectToAction("Index");
 			}
@@ -80,7 +78,7 @@ namespace diplom.Controllers
 				return NotFound();
 			}
 
-			var obj = await _teacherRepository.GetByIdAsync(id);
+			var obj = await _repository.GetByIdAsync(id);
 			if (obj == null)
 			{
 				return NotFound();
@@ -93,12 +91,12 @@ namespace diplom.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> DeletePost(int? id)
 		{
-			var obj = await _teacherRepository.GetByIdAsync(id);
+			var obj = await _repository.GetByIdAsync(id);
 			if (obj == null)
 			{
 				return NotFound();
 			}
-			_teacherRepository.Delete(obj);
+			_repository.Delete(obj);
 			TempData["success"] = "Преподаватель успешно удален";
 			return RedirectToAction("Index");
 		}

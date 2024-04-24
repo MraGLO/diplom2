@@ -14,4 +14,9 @@ public partial class Teacher
     public virtual ICollection<Load> Loads { get; set; } = new List<Load>();
 
     public virtual ICollection<TeacherSubject> TeacherSubjects { get; set; } = new List<TeacherSubject>();
+
+	public override string ToString()
+	{
+        return FullName;
+	}
 }

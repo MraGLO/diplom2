@@ -1,0 +1,40 @@
+﻿@model TeacherSubject
+
+<form method="post" asp-action="Create">
+	<div class="border p-3 mt-4">
+		<div class="row pb-2">
+			<h2 class="text-primary">Добавление прдметов к преподавателю</h2>
+			<hr/>
+		</div>
+		<div class="mb-3">
+			<label asp-for="TeacherId"></label>
+			<select asp-for="TeacherId">
+				<option>---Select---</option>
+				@foreach(var obj in ViewBag.Teachers)
+				{
+					<option value="@obj.Id">@obj</option>
+				}
+			</select>
+		</div>
+		<div class="mb-3">
+			<label asp-for="SubjectId"></label>
+			<select asp-for="SubjectId">
+				<option>---Select---</option>
+				@foreach (var obj in ViewBag.Teachers)
+				{
+					<option value="@obj.Id">@obj</option>
+				}
+			</select>
+		</div>
+		<button type="submit" class="btn btn-primary" style="width:150px">Добавить</button>
+		<a asp-controller="TeacherSubject" asp-action="Index" class="btn btn-secondary" style="width:150px">
+			Отменить
+		</a>
+	</div>
+</form>
+
+@section Scripts{
+	@{
+		<partial name="_ValidationScriptsPartial"></partial>
+	}
+}

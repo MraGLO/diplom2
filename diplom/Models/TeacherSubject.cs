@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace diplom.Models;
 
 public partial class TeacherSubject
 {
+    [Key]
     public int Id { get; set; }
 
     public int TeacherId { get; set; }

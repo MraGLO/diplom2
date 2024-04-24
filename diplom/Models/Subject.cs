@@ -15,4 +15,8 @@ public partial class Subject
     public virtual ICollection<SubjectSpecialization> SubjectSpecializations { get; set; } = new List<SubjectSpecialization>();
 
     public virtual ICollection<TeacherSubject> TeacherSubjects { get; set; } = new List<TeacherSubject>();
+	public override string ToString()
+	{
+		return SubjectName;
+	}
 }
